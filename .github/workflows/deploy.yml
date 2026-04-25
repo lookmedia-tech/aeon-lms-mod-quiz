@@ -19,18 +19,18 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       
-      - name: Deploy to Server
+      - name: Deploy to Staging Server
         run: |
           # Setup known_hosts
-          ssh-keyscan ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan aeon.lookmedia.co.id >> ~/.ssh/known_hosts
           
           # Sync plugin to server
           rsync -avz --delete \
             -e "ssh -o StrictHostKeyChecking=no" \
-            ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/opt/aeon-lms-web/plugins/mod_aeonquiz/
+            ./ ${{ secrets.SERVER_USER }}@aeon.lookmedia.co.id:/opt/aeon-lms-web/plugins/mod_aeonquiz/
           
           # Restart Moodle container
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+          ssh ${{ secrets.SERVER_USER }}@aeon.lookmedia.co.id \
             "cd /opt/aeon-lms-web && docker compose restart moodle"
           
-          echo "✅ Plugin mod_aeonquiz deployed successfully!"
+          echo "✅ Plugin mod_aeonquiz deployed to aeon.lookmedia.co.id!"
